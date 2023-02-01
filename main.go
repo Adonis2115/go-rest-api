@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/Adonis2115/go-rest-api/database"
+	"github.com/Adonis2115/go-rest-api/handlers"
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -16,6 +18,18 @@ func main() {
 	app := generateApp()
 	port := os.Getenv("PORT")
 	app.Listen(":" + port)
+}
+
+func generateApp() *fiber.App {
+	app := fiber.New()
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.SendString("OK")
+	})
+
+	libGroup := app.Group("/library")
+	libGroup.Get("/", handlers.GetLibraries)
+	libGroup.Post("/", handlers.CreateLibrary)
+	return app
 }
 
 func initApp() error {
